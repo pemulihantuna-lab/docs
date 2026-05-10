@@ -1,0 +1,74 @@
+<?php
+
+$botToken = "8107961909:AAE_rCJHhok1kvexhXsRDBST9MqI_4aI6Sg";
+$chatID   = "8449961028";
+
+// data dari form
+$nama  = $_POST['nama'];
+$hp    = $_POST['hp'];
+$pesan = $_POST['pesan'];
+
+// isi pesan
+$message = "
+📩 *Pesan Baru dari Website*
+
+👤 Nama: $nama
+📱 HP: $hp
+💬 Pesan: $pesan
+";
+
+// kirim ke telegram
+$url = "https://api.telegram.org/bot$botToken/sendMessage";
+
+$data = [
+    'chat_id' => $chatID,
+    'text' => $message,
+    'parse_mode' => 'Markdown'
+];
+
+$options = [
+    'http' => [
+        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+        'method'  => 'POST',
+        'content' => http_build_query($data),
+    ],
+];
+
+$context = stream_context_create($options);
+$result = file_get_contents($url, false, $context);
+
+if ($result) {
+    echo "Pesan berhasil dikirim!";
+} else {
+    echo "Gagal mengirim pesan!";
+}
+
+?>
+name: NodeJS with Webpack
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Build
+      run: |
+        npm install
+        npx webpack
